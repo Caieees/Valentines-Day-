@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💖 for loraine · valentine card 💖</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- PIXELATED LOADING SCREEN -->
+  <div class="loading-pixel" id="loadingScreen">
+    <div class="pixel-bg"></div>
+    <div class="pixel-envelope">
+      <div class="pixel-paper">
+        <div class="pixel-flap"></div>
+        <div class="pixel-body"></div>
+        <div class="pixel-stamp">❤️</div>
+      </div>
+    </div>
+    <p class="pixel-text">LOADING...</p>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="pink-paradise" id="mainContent" style="opacity: 0; transition: opacity 1.2s ease;">
+    <!-- Background elements -->
+    <div class="cloud-bg"></div>
+    <div class="petals"></div>
+    
+    <!-- REFRESH MODAL - only appears after first answer and on refresh -->
+    <div class="modal-sweet" id="refreshLetter">
+      <div class="sweet-ring"></div>
+      <div class="sweet-content">
+        <button class="sweet-close" id="closeRefresh">✕</button>
+        <div class="sweet-message" id="refreshMessage"></div>
+      </div>
+    </div>
+
+    <!-- SURPRISE HEADER - only appears after first answer and on refresh -->
+    <div class="header-blush" id="surpriseHeader">
+      <div class="blush-waves"></div>
+      <div class="floating-hearts-pink" id="floatingHearts"></div>
+      <div class="blush-message" id="surpriseMessage">🌸 welcome back 🌸</div>
+    </div>
+
+    <!-- MAIN INTERACTION -->
+    <div class="interaction-sweet">
+      <!-- ENVELOPE with CARD inside -->
+      <div class="envelope-sweet-container">
+        <div class="envelope-3d-sweet" id="envelopeCard">
+          <!-- Envelope front (visible by default) -->
+          <div class="envelope-front-sweet" id="envelopeFront">
+            <div class="flap-sweet"></div>
+            <div class="stamp-sweet">❤️</div>
+            <p class="hint-sweet">tap to open</p>
+          </div>
+          
+          <!-- Inside of envelope - contains the QUESTION CARD -->
+          <div class="envelope-inside-sweet" id="envelopeInside">
+            <!-- Question card inside envelope -->
+            <div class="question-card">
+              <div class="card-heart">❤️</div>
+              <h2 class="card-question">will you be my valentine?</h2>
+              
+              <div class="card-buttons">
+                <button class="card-btn yes-card" id="yesBtn">YES <span>💝</span></button>
+                <button class="card-btn no-card" id="noBtn">no <span>😢</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERMANENT LETTER VAULT - appears after choice -->
+      <div class="letter-pink-vault" id="letterVault">
+        <!-- LOVE LETTER - if she says YES -->
+        <div class="letter-pink love-pink" id="loveLetter">
+          <div class="pink-header">
+            <div class="pink-orb">💘</div>
+            <h2 class="pink-title" id="loveTitle">Hii Loraine</h2>
+          </div>
+          <div class="pink-scroll" id="loveBody">
+            <p>I'll cherish this day. Thank you for picking YES, I'm really glad. Siguro kung nakikita mo lang ako ngayon, kinikilig na ako sa saya. I'm really looking forward next time na 'di ka na busy.</p>
+            
+            <p>I know right now you got things to do and life's been busy for you, kaya naiintindihan ko. I hope you are always doing fine out there. Stay healthy and strong, alam kong kakayanin mo 'yan.</p>
+            
+            <p>Kapag pinanghihinaan ka ng loob at na-stress, ikaw tandaan mong nandito lang ako. Tutulungan kitang pasanin ang bigat na nararamdaman mo, at handang makinig sa'yo, at kung maari, papasayahin kita sa abot ng aking kaya.</p>
+            
+            <p>If you need something or help, I'm only one call away. I hope I don't put you under pressure.</p>
+            
+            <p>Yeah, that's all. Thank you for reading my letter until the end. Have a nice day everyday, Loraine!!</p>
+            
+            <p class="pink-signature">See you soon<br>💖</p>
+          </div>
+          <div class="pink-footer">
+            <span class="pink-signature-text">Chad Aiel</span>
+          </div>
+          <div class="pink-mini-hearts">❤️❤️❤️❤️❤️❤️</div>
+        </div>
+
+        <!-- APPRECIATION LETTER - if she says no -->
+        <div class="letter-pink appreciate-pink" id="appreciationLetter">
+          <div class="pink-header">
+            <div class="pink-orb">🤍</div>
+            <h2 class="pink-title" id="appreciationTitle">Hii Loraine</h2>
+          </div>
+          <div class="pink-scroll" id="appreciationBody">
+            <p>I understand, it's okay, no worries. I still did this, scared of what would happen, and I totally accept it. You made me happy, and because of you, I learned to love myself more and be better for myself, so thank you for being my friend and for getting to know you. I did this without regret.</p>
+            
+            <p>I hope you will succeed and achieve your dreams. I will be your number one fan and supporter, so if you need something or help, I'm only one call away. I hope I don't put you under pressure this time.</p>
+            
+            <p>Yep, that's all. Thank you for reading my letter until the end. Have a nice day everyday, Loraine!!</p>
+            
+            <p class="pink-signature">See you soon<br>💫</p>
+          </div>
+          <div class="pink-footer">
+            <span class="pink-signature-text">Chad Aiel</span>
+          </div>
+          <div class="pink-mini-hearts">🤍💫✨🕊️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
