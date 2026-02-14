@@ -1,4 +1,4 @@
-// script.js - PERMANENT MEMORY VERSION (uses localStorage, never resets)
+// script.js - FIXED: Both YES and no are saved permanently
 document.addEventListener('DOMContentLoaded', () => {
   // ===== PIXELATED LOADING SCREEN =====
   const loadingScreen = document.getElementById('loadingScreen');
@@ -47,44 +47,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeRefresh = document.getElementById('closeRefresh');
 
   // ===== PERMANENT STORAGE (localStorage - never resets) =====
-  const STORAGE_KEY = 'valentine_permanent';
+  const STORAGE_KEY = 'valentine_permanent_answer';
   const REFRESH_COUNT_KEY = 'valentine_refresh_count';
   
   // Load saved state
-  let savedState = localStorage.getItem(STORAGE_KEY);
+  let savedAnswer = localStorage.getItem(STORAGE_KEY);
   let refreshCount = parseInt(localStorage.getItem(REFRESH_COUNT_KEY) || '0');
   
-  // If there's a saved answer, show the letter immediately
-  if (savedState) {
-    const answer = savedState;
+  // If there's a saved answer (YES or no), show the appropriate letter immediately
+  if (savedAnswer) {
+    console.log("Saved answer found:", savedAnswer); // For debugging
     
-    // Hide envelope and show letter
+    // Hide envelope and show letter vault
     envelopeFront.classList.add('hidden');
     envelopeInside.classList.remove('visible');
     letterVault.style.display = 'block';
     
-    if (answer === 'yes') {
+    // Show the correct letter based on saved answer
+    if (savedAnswer === 'yes') {
       loveLetter.classList.add('visible');
       appreciationLetter.classList.remove('visible');
-    } else if (answer === 'no') {
+      console.log("Showing YES letter");
+    } else if (savedAnswer === 'no') {
       appreciationLetter.classList.add('visible');
       loveLetter.classList.remove('visible');
+      console.log("Showing NO letter");
     }
     
-    // Show refresh elements if this is a return visit
+    // Show refresh elements if this is a return visit (refreshCount > 0)
     if (refreshCount > 0) {
-      const messageIndex = (refreshCount - 1) % 5;
+      const messageIndex = (refreshCount - 1) % refreshLetters.length;
       refreshMessage.innerHTML = refreshLetters[messageIndex];
       refreshModal.classList.add('show');
       
-      const surpriseIndex = (refreshCount - 1) % 5;
+      const surpriseIndex = (refreshCount - 1) % surpriseMessages.length;
       surpriseMessage.innerText = surpriseMessages[surpriseIndex];
       surpriseHeader.classList.add('show');
       
       generatePinkHearts();
     }
   } else {
-    // Ensure everything starts hidden for new users
+    // No saved answer - ensure everything starts hidden for new users
+    console.log("No saved answer found");
     surpriseHeader.classList.remove('show');
     refreshModal.classList.remove('show');
     letterVault.style.display = 'none';
@@ -140,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
       yesBtn.classList.add('pressed');
     }
     if (yesPressCount >= MAX_PRESS) {
-      showFinalLetter('yes');
+      saveAnswerAndShowLetter('yes');
     }
   }
 
@@ -150,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
       noBtn.classList.add('pressed');
     }
     if (noPressCount >= MAX_PRESS) {
-      showFinalLetter('no');
+      saveAnswerAndShowLetter('no');
     }
   }
 
@@ -165,33 +169,35 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshModal.classList.remove('show');
   });
 
-  // Show the final letter (FIRST TIME ANSWERING)
-  function showFinalLetter(type) {
+  // Save answer and show the final letter (works for BOTH yes AND no)
+  function saveAnswerAndShowLetter(answer) {
+    console.log("Saving answer:", answer); // For debugging
+    
+    // Hide envelope and show letter vault
     envelopeInside.classList.remove('visible');
     envelopeFront.classList.add('hidden');
-    
-    // Show letter vault
     letterVault.style.display = 'block';
     
-    if (type === 'yes') {
+    // Show the correct letter
+    if (answer === 'yes') {
       loveLetter.classList.add('visible');
       appreciationLetter.classList.remove('visible');
-    } else {
+    } else if (answer === 'no') {
       appreciationLetter.classList.add('visible');
       loveLetter.classList.remove('visible');
     }
     
-    // Save answer PERMANENTLY in localStorage
-    localStorage.setItem(STORAGE_KEY, type);
+    // Save answer PERMANENTLY in localStorage (works for BOTH)
+    localStorage.setItem(STORAGE_KEY, answer);
     
     // Increment refresh count and save it
-    refreshCount++;
+    refreshCount = 1; // First answer, set to 1
     localStorage.setItem(REFRESH_COUNT_KEY, refreshCount.toString());
     
     // Show refresh elements for the FIRST TIME
     showRefreshModal();
     
-    const surpriseIndex = refreshCount % surpriseMessages.length;
+    const surpriseIndex = 0; // First message
     surpriseMessage.innerText = surpriseMessages[surpriseIndex];
     surpriseHeader.classList.add('show');
     
