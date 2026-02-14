@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>💖 one time · valentine 💖</title>
+  <title>💖 for loraine · valentine card 💖</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,23 +24,13 @@
     <p class="pixel-text">LOADING...</p>
   </div>
 
-  <!-- EXPIRED MESSAGE (shown if someone new tries to use the link) -->
-  <div class="expired-message" id="expiredMessage">
-    <div class="expired-content">
-      <div class="expired-heart">💔</div>
-      <h2 class="expired-title">this link has been claimed</h2>
-      <p class="expired-text">This valentine was meant for one person.<br>If you're Loraine, you can still view your letter below.</p>
-      <div class="expired-footer">💕</div>
-    </div>
-  </div>
-
   <!-- MAIN CONTENT -->
-  <div class="pink-paradise" id="mainContent">
+  <div class="pink-paradise" id="mainContent" style="opacity: 0; transition: opacity 1.2s ease;">
     <!-- Background elements -->
     <div class="cloud-bg"></div>
     <div class="petals"></div>
     
-    <!-- REFRESH MODAL -->
+    <!-- REFRESH MODAL - appears after making a choice -->
     <div class="modal-sweet" id="refreshLetter">
       <div class="sweet-ring"></div>
       <div class="sweet-content">
@@ -49,8 +39,8 @@
       </div>
     </div>
 
-    <!-- SURPRISE HEADER -->
-    <div class="header-blush" id="surpriseHeader">
+    <!-- SURPRISE HEADER - appears after making a choice -->
+    <div class="header-blush" id="surpriseHeader" style="display: none;">
       <div class="blush-waves"></div>
       <div class="floating-hearts-pink" id="floatingHearts"></div>
       <div class="blush-message" id="surpriseMessage">🌸 welcome back 🌸</div>
@@ -84,9 +74,9 @@
         </div>
       </div>
 
-      <!-- PERMANENT LETTER VAULT -->
-      <div class="letter-pink-vault" id="letterVault">
-        <!-- LOVE LETTER -->
+      <!-- PERMANENT LETTER VAULT - appears after choice -->
+      <div class="letter-pink-vault" style="display: none;" id="letterVault">
+        <!-- LOVE LETTER - if she says YES -->
         <div class="letter-pink love-pink" id="loveLetter">
           <div class="pink-header">
             <div class="pink-orb">💘</div>
@@ -111,7 +101,7 @@
           <div class="pink-mini-hearts">❤️🧡💛💚💙💜</div>
         </div>
 
-        <!-- APPRECIATION LETTER -->
+        <!-- APPRECIATION LETTER - if she says no -->
         <div class="letter-pink appreciate-pink" id="appreciationLetter">
           <div class="pink-header">
             <div class="pink-orb">🤍</div>
