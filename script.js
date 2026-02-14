@@ -1,4 +1,4 @@
-// script.js - WITH GIFS for "you sure?" button
+// script.js - COMPLETE FIXED VERSION WITH WORKING GIFS
 document.addEventListener('DOMContentLoaded', () => {
   // ===== PIXELATED LOADING SCREEN =====
   const loadingScreen = document.getElementById('loadingScreen');
@@ -45,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const refreshModal = document.getElementById('refreshLetter');
   const refreshMessage = document.getElementById('refreshMessage');
   const closeRefresh = document.getElementById('closeRefresh');
+  
+  const gifContainer = document.getElementById('gifContainer');
 
   // ===== PERMANENT STORAGE =====
   const STORAGE_KEY = 'valentine_permanent_answer';
@@ -108,14 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== FUNCTION TO SHOW GIF =====
   function showGif(type) {
-    // Remove any existing GIF container
-    const oldGif = document.querySelector('.gif-container');
-    if (oldGif) oldGif.remove();
-
-    // Create container for the GIF
-    const gifContainer = document.createElement('div');
-    gifContainer.className = 'gif-container';
+    // Clear any existing GIF
+    gifContainer.innerHTML = '';
     
+    // Create GIF image
     const gifImg = document.createElement('img');
     gifImg.className = 'reaction-gif';
     
@@ -130,12 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     gifContainer.appendChild(gifImg);
     
-    // Add it below the buttons
-    document.querySelector('.question-card').appendChild(gifContainer);
-    
     // Remove GIF after 3 seconds
     setTimeout(() => {
-      gifContainer.remove();
+      gifContainer.innerHTML = '';
     }, 3000);
   }
 
@@ -237,6 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
     noPressCount = 0;
     resetYesButton();
     resetNoButton();
+    
+    // Clear any leftover GIFs
+    gifContainer.innerHTML = '';
   });
 
   yesBtn.addEventListener('click', (e) => {
