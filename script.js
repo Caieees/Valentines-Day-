@@ -258,3 +258,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+/* GIF Container Styles */
+.gif-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  animation: gifPop 0.3s ease;
+}
+
+.reaction-gif {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(255, 100, 150, 0.3);
+  border: 3px solid white;
+  image-rendering: pixelated;
+}
+
+@keyframes gifPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
