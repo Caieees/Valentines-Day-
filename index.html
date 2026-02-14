@@ -30,7 +30,7 @@
     <div class="cloud-bg"></div>
     <div class="petals"></div>
     
-    <!-- REFRESH MODAL - appears after making a choice -->
+    <!-- REFRESH MODAL - only appears after first answer and on refresh -->
     <div class="modal-sweet" id="refreshLetter">
       <div class="sweet-ring"></div>
       <div class="sweet-content">
@@ -39,8 +39,8 @@
       </div>
     </div>
 
-    <!-- SURPRISE HEADER - appears after making a choice -->
-    <div class="header-blush" id="surpriseHeader" style="display: none;">
+    <!-- SURPRISE HEADER - only appears after first answer and on refresh -->
+    <div class="header-blush" id="surpriseHeader">
       <div class="blush-waves"></div>
       <div class="floating-hearts-pink" id="floatingHearts"></div>
       <div class="blush-message" id="surpriseMessage">🌸 welcome back 🌸</div>
@@ -75,7 +75,7 @@
       </div>
 
       <!-- PERMANENT LETTER VAULT - appears after choice -->
-      <div class="letter-pink-vault" style="display: none;" id="letterVault">
+      <div class="letter-pink-vault" id="letterVault">
         <!-- LOVE LETTER - if she says YES -->
         <div class="letter-pink love-pink" id="loveLetter">
           <div class="pink-header">
@@ -124,6 +124,10 @@
       </div>
     </div>
   </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
   <script src="script.js"></script>
 </body>
