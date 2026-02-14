@@ -1,4 +1,4 @@
-// script.js - NORMAL SHAREABLE VERSION (no one-time link)
+// script.js - PERMANENT MEMORY VERSION (uses localStorage, never resets)
 document.addEventListener('DOMContentLoaded', () => {
   // ===== PIXELATED LOADING SCREEN =====
   const loadingScreen = document.getElementById('loadingScreen');
@@ -46,10 +46,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const refreshMessage = document.getElementById('refreshMessage');
   const closeRefresh = document.getElementById('closeRefresh');
 
-  // Ensure everything starts hidden
-  surpriseHeader.classList.remove('show');
-  refreshModal.classList.remove('show');
-  letterVault.style.display = 'none';
+  // ===== PERMANENT STORAGE (localStorage - never resets) =====
+  const STORAGE_KEY = 'valentine_permanent';
+  const REFRESH_COUNT_KEY = 'valentine_refresh_count';
+  
+  // Load saved state
+  let savedState = localStorage.getItem(STORAGE_KEY);
+  let refreshCount = parseInt(localStorage.getItem(REFRESH_COUNT_KEY) || '0');
+  
+  // If there's a saved answer, show the letter immediately
+  if (savedState) {
+    const answer = savedState;
+    
+    // Hide envelope and show letter
+    envelopeFront.classList.add('hidden');
+    envelopeInside.classList.remove('visible');
+    letterVault.style.display = 'block';
+    
+    if (answer === 'yes') {
+      loveLetter.classList.add('visible');
+      appreciationLetter.classList.remove('visible');
+    } else if (answer === 'no') {
+      appreciationLetter.classList.add('visible');
+      loveLetter.classList.remove('visible');
+    }
+    
+    // Show refresh elements if this is a return visit
+    if (refreshCount > 0) {
+      const messageIndex = (refreshCount - 1) % 5;
+      refreshMessage.innerHTML = refreshLetters[messageIndex];
+      refreshModal.classList.add('show');
+      
+      const surpriseIndex = (refreshCount - 1) % 5;
+      surpriseMessage.innerText = surpriseMessages[surpriseIndex];
+      surpriseHeader.classList.add('show');
+      
+      generatePinkHearts();
+    }
+  } else {
+    // Ensure everything starts hidden for new users
+    surpriseHeader.classList.remove('show');
+    refreshModal.classList.remove('show');
+    letterVault.style.display = 'none';
+  }
   
   // Track press counts for each button (max 3)
   let yesPressCount = 0;
@@ -81,9 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     '✨ one more time? ✨',
     '😏 you came back again... cute 😏'
   ];
-
-  // Track refresh count (resets when page is closed)
-  let refreshCount = 0;
 
   // ---------- BUTTON FUNCTIONS ----------
   function resetYesButton() {
@@ -129,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshModal.classList.remove('show');
   });
 
-  // Show the final letter
+  // Show the final letter (FIRST TIME ANSWERING)
   function showFinalLetter(type) {
     envelopeInside.classList.remove('visible');
     envelopeFront.classList.add('hidden');
@@ -145,8 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
       loveLetter.classList.remove('visible');
     }
     
-    // Increment refresh count and show surprise elements
+    // Save answer PERMANENTLY in localStorage
+    localStorage.setItem(STORAGE_KEY, type);
+    
+    // Increment refresh count and save it
     refreshCount++;
+    localStorage.setItem(REFRESH_COUNT_KEY, refreshCount.toString());
+    
+    // Show refresh elements for the FIRST TIME
     showRefreshModal();
     
     const surpriseIndex = refreshCount % surpriseMessages.length;
