@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>💖 for loraine · valentine card 💖</title>
+  <title>💖 one time · valentine 💖</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,13 +24,23 @@
     <p class="pixel-text">LOADING...</p>
   </div>
 
+  <!-- EXPIRED MESSAGE (shown if someone new tries to use the link) -->
+  <div class="expired-message" id="expiredMessage">
+    <div class="expired-content">
+      <div class="expired-heart">💔</div>
+      <h2 class="expired-title">this link has been claimed</h2>
+      <p class="expired-text">This valentine was meant for one person.<br>If you're Loraine, you can still view your letter below.</p>
+      <div class="expired-footer">💕</div>
+    </div>
+  </div>
+
   <!-- MAIN CONTENT -->
-  <div class="pink-paradise" id="mainContent" style="opacity: 0; transition: opacity 1.2s ease;">
+  <div class="pink-paradise" id="mainContent">
     <!-- Background elements -->
     <div class="cloud-bg"></div>
     <div class="petals"></div>
     
-    <!-- REFRESH MODAL - only appears after first answer and on refresh -->
+    <!-- REFRESH MODAL -->
     <div class="modal-sweet" id="refreshLetter">
       <div class="sweet-ring"></div>
       <div class="sweet-content">
@@ -39,7 +49,7 @@
       </div>
     </div>
 
-    <!-- SURPRISE HEADER - only appears after first answer and on refresh -->
+    <!-- SURPRISE HEADER -->
     <div class="header-blush" id="surpriseHeader">
       <div class="blush-waves"></div>
       <div class="floating-hearts-pink" id="floatingHearts"></div>
@@ -74,9 +84,9 @@
         </div>
       </div>
 
-      <!-- PERMANENT LETTER VAULT - appears after choice -->
+      <!-- PERMANENT LETTER VAULT -->
       <div class="letter-pink-vault" id="letterVault">
-        <!-- LOVE LETTER - if she says YES -->
+        <!-- LOVE LETTER -->
         <div class="letter-pink love-pink" id="loveLetter">
           <div class="pink-header">
             <div class="pink-orb">💘</div>
@@ -98,10 +108,10 @@
           <div class="pink-footer">
             <span class="pink-signature-text">Chad Aiel</span>
           </div>
-          <div class="pink-mini-hearts">❤️❤️❤️❤️❤️❤️</div>
+          <div class="pink-mini-hearts">❤️🧡💛💚💙💜</div>
         </div>
 
-        <!-- APPRECIATION LETTER - if she says no -->
+        <!-- APPRECIATION LETTER -->
         <div class="letter-pink appreciate-pink" id="appreciationLetter">
           <div class="pink-header">
             <div class="pink-orb">🤍</div>
