@@ -1,4 +1,4 @@
-// script.js - FIXED: Both YES and no are saved permanently
+// script.js - WITH GIFS for "you sure?" button
 document.addEventListener('DOMContentLoaded', () => {
   // ===== PIXELATED LOADING SCREEN =====
   const loadingScreen = document.getElementById('loadingScreen');
@@ -46,36 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const refreshMessage = document.getElementById('refreshMessage');
   const closeRefresh = document.getElementById('closeRefresh');
 
-  // ===== PERMANENT STORAGE (localStorage - never resets) =====
+  // ===== PERMANENT STORAGE =====
   const STORAGE_KEY = 'valentine_permanent_answer';
   const REFRESH_COUNT_KEY = 'valentine_refresh_count';
+  const FIRST_ANSWER_KEY = 'valentine_first_answer_done';
   
   // Load saved state
   let savedAnswer = localStorage.getItem(STORAGE_KEY);
   let refreshCount = parseInt(localStorage.getItem(REFRESH_COUNT_KEY) || '0');
+  let firstAnswerDone = localStorage.getItem(FIRST_ANSWER_KEY) === 'true';
   
-  // If there's a saved answer (YES or no), show the appropriate letter immediately
+  // If there's a saved answer, show the appropriate letter immediately
   if (savedAnswer) {
-    console.log("Saved answer found:", savedAnswer); // For debugging
+    console.log("Saved answer found:", savedAnswer);
     
-    // Hide envelope and show letter vault
     envelopeFront.classList.add('hidden');
     envelopeInside.classList.remove('visible');
     letterVault.style.display = 'block';
     
-    // Show the correct letter based on saved answer
     if (savedAnswer === 'yes') {
       loveLetter.classList.add('visible');
       appreciationLetter.classList.remove('visible');
-      console.log("Showing YES letter");
     } else if (savedAnswer === 'no') {
       appreciationLetter.classList.add('visible');
       loveLetter.classList.remove('visible');
-      console.log("Showing NO letter");
     }
     
-    // Show refresh elements if this is a return visit (refreshCount > 0)
-    if (refreshCount > 0) {
+    // Show refresh elements ONLY on refresh/reopen
+    if (refreshCount > 0 && firstAnswerDone) {
       const messageIndex = (refreshCount - 1) % refreshLetters.length;
       refreshMessage.innerHTML = refreshLetters[messageIndex];
       refreshModal.classList.add('show');
@@ -85,16 +83,17 @@ document.addEventListener('DOMContentLoaded', () => {
       surpriseHeader.classList.add('show');
       
       generatePinkHearts();
+    } else {
+      surpriseHeader.classList.remove('show');
+      refreshModal.classList.remove('show');
     }
   } else {
-    // No saved answer - ensure everything starts hidden for new users
-    console.log("No saved answer found");
     surpriseHeader.classList.remove('show');
     refreshModal.classList.remove('show');
     letterVault.style.display = 'none';
   }
   
-  // Track press counts for each button (max 3)
+  // Track press counts
   let yesPressCount = 0;
   let noPressCount = 0;
   const MAX_PRESS = 3;
@@ -103,20 +102,52 @@ document.addEventListener('DOMContentLoaded', () => {
   const yesTexts = ["YES 💝", "really? 💭", "you sure? 💖"];
   const noTexts = ["no 😢", "really? 💭", "you sure? 💔"];
 
-  // ===== PERSONALIZED REFRESH LETTERS =====
+  // ===== GIF LINKS =====
+  const HAPPY_CAT_GIF = 'https://media.tenor.com/6n68etrhR2wAAAAi/happy-catto-cats.gif';
+  const SUS_CAT_GIF = 'https://media.tenor.com/_cGquT5e21MAAAAi/cat.gif';
+
+  // ===== FUNCTION TO SHOW GIF =====
+  function showGif(type) {
+    // Remove any existing GIF container
+    const oldGif = document.querySelector('.gif-container');
+    if (oldGif) oldGif.remove();
+
+    // Create container for the GIF
+    const gifContainer = document.createElement('div');
+    gifContainer.className = 'gif-container';
+    
+    const gifImg = document.createElement('img');
+    gifImg.className = 'reaction-gif';
+    
+    // Set the correct GIF
+    if (type === 'happy') {
+      gifImg.src = HAPPY_CAT_GIF;
+      gifImg.alt = 'Happy Cat';
+    } else if (type === 'sus') {
+      gifImg.src = SUS_CAT_GIF;
+      gifImg.alt = 'Suspicious Cat';
+    }
+    
+    gifContainer.appendChild(gifImg);
+    
+    // Add it below the buttons
+    document.querySelector('.question-card').appendChild(gifContainer);
+    
+    // Remove GIF after 3 seconds
+    setTimeout(() => {
+      gifContainer.remove();
+    }, 3000);
+  }
+
+  // ===== REFRESH MESSAGES =====
   const refreshLetters = [
     "<p>You came back!! 💕</p><p>I was hoping you would. Every time you visit, my heart does a little flip. The original letter is still waiting for you below.</p><p>Take your time, there's no rush.</p>",
-    
     "<p>Miss already? 🥰</p><p>I missed you too. It's nice to see you again.</p><p>The letter hasn't changed, but it's always here for you.</p>",
-    
     "<p>How are you? 💭</p><p>I'm glad that you want to read the letter I wrote just for you.</p><p>Take your time!!</p>",
-    
     "<p>One more time? 💫</p><p>You keep coming back. I wonder what's on your mind.</p><p>The letter is right there when you're ready.</p>",
-    
     "<p>You are not sure about your answer, didn't you? 😏</p><p>It's okay to take your time. Some decisions need a little extra thought.</p><p>The letter will always be here when you're ready.</p>"
   ];
 
-  // Surprise messages that also loop
   const surpriseMessages = [
     '🌸 welcome back 🌸',
     '💕 missed you 💕',
@@ -142,6 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (yesPressCount < MAX_PRESS) {
       yesBtn.textContent = yesTexts[yesPressCount];
       yesBtn.classList.add('pressed');
+      
+      // Show happy cat GIF when it's "you sure?" (3rd press)
+      if (yesPressCount === 2) {
+        showGif('happy');
+      }
     }
     if (yesPressCount >= MAX_PRESS) {
       saveAnswerAndShowLetter('yes');
@@ -152,33 +188,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (noPressCount < MAX_PRESS) {
       noBtn.textContent = noTexts[noPressCount];
       noBtn.classList.add('pressed');
+      
+      // Show sus cat GIF when it's "you sure?" (3rd press)
+      if (noPressCount === 2) {
+        showGif('sus');
+      }
     }
     if (noPressCount >= MAX_PRESS) {
       saveAnswerAndShowLetter('no');
     }
   }
 
-  // Show refresh modal
-  function showRefreshModal() {
-    const messageIndex = refreshCount % refreshLetters.length;
-    refreshMessage.innerHTML = refreshLetters[messageIndex];
-    refreshModal.classList.add('show');
-  }
-
   closeRefresh.addEventListener('click', () => {
     refreshModal.classList.remove('show');
   });
 
-  // Save answer and show the final letter (works for BOTH yes AND no)
   function saveAnswerAndShowLetter(answer) {
-    console.log("Saving answer:", answer); // For debugging
-    
-    // Hide envelope and show letter vault
     envelopeInside.classList.remove('visible');
     envelopeFront.classList.add('hidden');
     letterVault.style.display = 'block';
     
-    // Show the correct letter
     if (answer === 'yes') {
       loveLetter.classList.add('visible');
       appreciationLetter.classList.remove('visible');
@@ -187,19 +216,13 @@ document.addEventListener('DOMContentLoaded', () => {
       loveLetter.classList.remove('visible');
     }
     
-    // Save answer PERMANENTLY in localStorage (works for BOTH)
     localStorage.setItem(STORAGE_KEY, answer);
-    
-    // Increment refresh count and save it
-    refreshCount = 1; // First answer, set to 1
+    localStorage.setItem(FIRST_ANSWER_KEY, 'true');
+    refreshCount = 0;
     localStorage.setItem(REFRESH_COUNT_KEY, refreshCount.toString());
     
-    // Show refresh elements for the FIRST TIME
-    showRefreshModal();
-    
-    const surpriseIndex = 0; // First message
-    surpriseMessage.innerText = surpriseMessages[surpriseIndex];
-    surpriseHeader.classList.add('show');
+    surpriseHeader.classList.remove('show');
+    refreshModal.classList.remove('show');
     
     generatePinkHearts();
   }
@@ -210,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
     envelopeFront.classList.add('hidden');
     envelopeInside.classList.add('visible');
     
-    // Reset button states
     yesPressCount = 0;
     noPressCount = 0;
     resetYesButton();
@@ -258,31 +280,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
-
-/* GIF Container Styles */
-.gif-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  animation: gifPop 0.3s ease;
-}
-
-.reaction-gif {
-  width: 100px;
-  height: 100px;
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(255, 100, 150, 0.3);
-  border: 3px solid white;
-  image-rendering: pixelated;
-}
-
-@keyframes gifPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
