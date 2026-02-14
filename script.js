@@ -1,34 +1,52 @@
-// script.js - COMPLETE FIXED VERSION WITH WORKING GIFS
+// script.js - COMPLETE FIXED VERSION (Loading screen guaranteed to disappear)
 document.addEventListener('DOMContentLoaded', () => {
-  // ===== PIXELATED LOADING SCREEN =====
+  // ===== PIXELATED LOADING SCREEN - FIXED =====
   const loadingScreen = document.getElementById('loadingScreen');
   const mainContent = document.getElementById('mainContent');
   
-  // Add pixel particles
-  const pixelBg = document.querySelector('.pixel-bg');
-  for (let i = 0; i < 30; i++) {
-    const pixel = document.createElement('div');
-    pixel.style.position = 'absolute';
-    pixel.style.width = '4px';
-    pixel.style.height = '4px';
-    pixel.style.background = '#ffb7c7';
-    pixel.style.left = `${Math.random() * 100}%`;
-    pixel.style.top = `${Math.random() * 100}%`;
-    pixel.style.opacity = Math.random() * 0.5;
-    pixel.style.animation = `pixelFloat ${Math.random() * 3 + 2}s infinite steps(8)`;
-    pixelBg.appendChild(pixel);
+  // Make sure elements exist
+  if (!loadingScreen || !mainContent) {
+    console.error("Required elements not found!");
+    return;
   }
   
-  // Loading timeout
+  // Add pixel particles (this won't block loading)
+  try {
+    const pixelBg = document.querySelector('.pixel-bg');
+    if (pixelBg) {
+      for (let i = 0; i < 20; i++) {
+        const pixel = document.createElement('div');
+        pixel.style.position = 'absolute';
+        pixel.style.width = '4px';
+        pixel.style.height = '4px';
+        pixel.style.background = '#ffb7c7';
+        pixel.style.left = `${Math.random() * 100}%`;
+        pixel.style.top = `${Math.random() * 100}%`;
+        pixel.style.opacity = Math.random() * 0.5;
+        pixel.style.animation = `pixelFloat ${Math.random() * 3 + 2}s infinite steps(8)`;
+        pixelBg.appendChild(pixel);
+      }
+    }
+  } catch (e) {
+    console.log("Particle generation skipped:", e);
+  }
+  
+  // FORCE loading screen to disappear after 2 seconds NO MATTER WHAT
   setTimeout(() => {
-    loadingScreen.classList.add('fade-out');
-    mainContent.style.opacity = '1';
-    setTimeout(() => {
-      loadingScreen.style.display = 'none';
-    }, 1000);
+    if (loadingScreen) {
+      loadingScreen.classList.add('fade-out');
+      // Force hide after fade
+      setTimeout(() => {
+        loadingScreen.style.display = 'none';
+      }, 1000);
+    }
+    if (mainContent) {
+      mainContent.style.opacity = '1';
+    }
   }, 2000);
 
   // ===== MAIN APPLICATION =====
+  // Get all elements with error checking
   const envelopeFront = document.getElementById('envelopeFront');
   const envelopeInside = document.getElementById('envelopeInside');
   const yesBtn = document.getElementById('yesBtn');
@@ -48,51 +66,65 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const gifContainer = document.getElementById('gifContainer');
 
+  // Check if critical elements exist
+  if (!envelopeFront || !yesBtn || !noBtn) {
+    console.error("Critical elements missing!");
+    return;
+  }
+
   // ===== PERMANENT STORAGE =====
   const STORAGE_KEY = 'valentine_permanent_answer';
   const REFRESH_COUNT_KEY = 'valentine_refresh_count';
   const FIRST_ANSWER_KEY = 'valentine_first_answer_done';
   
   // Load saved state
-  let savedAnswer = localStorage.getItem(STORAGE_KEY);
-  let refreshCount = parseInt(localStorage.getItem(REFRESH_COUNT_KEY) || '0');
-  let firstAnswerDone = localStorage.getItem(FIRST_ANSWER_KEY) === 'true';
+  let savedAnswer = null;
+  let refreshCount = 0;
+  let firstAnswerDone = false;
+  
+  try {
+    savedAnswer = localStorage.getItem(STORAGE_KEY);
+    refreshCount = parseInt(localStorage.getItem(REFRESH_COUNT_KEY) || '0');
+    firstAnswerDone = localStorage.getItem(FIRST_ANSWER_KEY) === 'true';
+  } catch (e) {
+    console.log("LocalStorage error:", e);
+  }
   
   // If there's a saved answer, show the appropriate letter immediately
   if (savedAnswer) {
     console.log("Saved answer found:", savedAnswer);
     
-    envelopeFront.classList.add('hidden');
-    envelopeInside.classList.remove('visible');
-    letterVault.style.display = 'block';
+    if (envelopeFront) envelopeFront.classList.add('hidden');
+    if (envelopeInside) envelopeInside.classList.remove('visible');
+    if (letterVault) letterVault.style.display = 'block';
     
     if (savedAnswer === 'yes') {
-      loveLetter.classList.add('visible');
-      appreciationLetter.classList.remove('visible');
+      if (loveLetter) loveLetter.classList.add('visible');
+      if (appreciationLetter) appreciationLetter.classList.remove('visible');
     } else if (savedAnswer === 'no') {
-      appreciationLetter.classList.add('visible');
-      loveLetter.classList.remove('visible');
+      if (appreciationLetter) appreciationLetter.classList.add('visible');
+      if (loveLetter) loveLetter.classList.remove('visible');
     }
     
     // Show refresh elements ONLY on refresh/reopen
     if (refreshCount > 0 && firstAnswerDone) {
       const messageIndex = (refreshCount - 1) % refreshLetters.length;
-      refreshMessage.innerHTML = refreshLetters[messageIndex];
-      refreshModal.classList.add('show');
+      if (refreshMessage) refreshMessage.innerHTML = refreshLetters[messageIndex];
+      if (refreshModal) refreshModal.classList.add('show');
       
       const surpriseIndex = (refreshCount - 1) % surpriseMessages.length;
-      surpriseMessage.innerText = surpriseMessages[surpriseIndex];
-      surpriseHeader.classList.add('show');
+      if (surpriseMessage) surpriseMessage.innerText = surpriseMessages[surpriseIndex];
+      if (surpriseHeader) surpriseHeader.classList.add('show');
       
       generatePinkHearts();
     } else {
-      surpriseHeader.classList.remove('show');
-      refreshModal.classList.remove('show');
+      if (surpriseHeader) surpriseHeader.classList.remove('show');
+      if (refreshModal) refreshModal.classList.remove('show');
     }
   } else {
-    surpriseHeader.classList.remove('show');
-    refreshModal.classList.remove('show');
-    letterVault.style.display = 'none';
+    if (surpriseHeader) surpriseHeader.classList.remove('show');
+    if (refreshModal) refreshModal.classList.remove('show');
+    if (letterVault) letterVault.style.display = 'none';
   }
   
   // Track press counts
@@ -110,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== FUNCTION TO SHOW GIF =====
   function showGif(type) {
+    if (!gifContainer) return;
+    
     // Clear any existing GIF
     gifContainer.innerHTML = '';
     
@@ -130,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Remove GIF after 3 seconds
     setTimeout(() => {
-      gifContainer.innerHTML = '';
+      if (gifContainer) gifContainer.innerHTML = '';
     }, 3000);
   }
 
@@ -154,17 +188,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- BUTTON FUNCTIONS ----------
   function resetYesButton() {
     yesPressCount = 0;
-    yesBtn.textContent = yesTexts[0];
-    yesBtn.classList.remove('pressed');
+    if (yesBtn) {
+      yesBtn.textContent = yesTexts[0];
+      yesBtn.classList.remove('pressed');
+    }
   }
 
   function resetNoButton() {
     noPressCount = 0;
-    noBtn.textContent = noTexts[0];
-    noBtn.classList.remove('pressed');
+    if (noBtn) {
+      noBtn.textContent = noTexts[0];
+      noBtn.classList.remove('pressed');
+    }
   }
 
   function updateYesButton() {
+    if (!yesBtn) return;
+    
     if (yesPressCount < MAX_PRESS) {
       yesBtn.textContent = yesTexts[yesPressCount];
       yesBtn.classList.add('pressed');
@@ -180,6 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateNoButton() {
+    if (!noBtn) return;
+    
     if (noPressCount < MAX_PRESS) {
       noBtn.textContent = noTexts[noPressCount];
       noBtn.classList.add('pressed');
@@ -194,62 +236,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  closeRefresh.addEventListener('click', () => {
-    refreshModal.classList.remove('show');
-  });
+  if (closeRefresh) {
+    closeRefresh.addEventListener('click', () => {
+      if (refreshModal) refreshModal.classList.remove('show');
+    });
+  }
 
   function saveAnswerAndShowLetter(answer) {
-    envelopeInside.classList.remove('visible');
-    envelopeFront.classList.add('hidden');
-    letterVault.style.display = 'block';
+    if (envelopeInside) envelopeInside.classList.remove('visible');
+    if (envelopeFront) envelopeFront.classList.add('hidden');
+    if (letterVault) letterVault.style.display = 'block';
     
     if (answer === 'yes') {
-      loveLetter.classList.add('visible');
-      appreciationLetter.classList.remove('visible');
+      if (loveLetter) loveLetter.classList.add('visible');
+      if (appreciationLetter) appreciationLetter.classList.remove('visible');
     } else if (answer === 'no') {
-      appreciationLetter.classList.add('visible');
-      loveLetter.classList.remove('visible');
+      if (appreciationLetter) appreciationLetter.classList.add('visible');
+      if (loveLetter) loveLetter.classList.remove('visible');
     }
     
-    localStorage.setItem(STORAGE_KEY, answer);
-    localStorage.setItem(FIRST_ANSWER_KEY, 'true');
-    refreshCount = 0;
-    localStorage.setItem(REFRESH_COUNT_KEY, refreshCount.toString());
+    try {
+      localStorage.setItem(STORAGE_KEY, answer);
+      localStorage.setItem(FIRST_ANSWER_KEY, 'true');
+      localStorage.setItem(REFRESH_COUNT_KEY, '0');
+    } catch (e) {
+      console.log("LocalStorage save error:", e);
+    }
     
-    surpriseHeader.classList.remove('show');
-    refreshModal.classList.remove('show');
+    if (surpriseHeader) surpriseHeader.classList.remove('show');
+    if (refreshModal) refreshModal.classList.remove('show');
     
     generatePinkHearts();
   }
 
   // ---------- CLICK HANDLERS ----------
-  envelopeFront.addEventListener('click', (e) => {
-    e.stopPropagation();
-    envelopeFront.classList.add('hidden');
-    envelopeInside.classList.add('visible');
-    
-    yesPressCount = 0;
-    noPressCount = 0;
-    resetYesButton();
-    resetNoButton();
-    
-    // Clear any leftover GIFs
-    gifContainer.innerHTML = '';
-  });
+  if (envelopeFront) {
+    envelopeFront.addEventListener('click', (e) => {
+      e.stopPropagation();
+      envelopeFront.classList.add('hidden');
+      if (envelopeInside) envelopeInside.classList.add('visible');
+      
+      yesPressCount = 0;
+      noPressCount = 0;
+      resetYesButton();
+      resetNoButton();
+      
+      // Clear any leftover GIFs
+      if (gifContainer) gifContainer.innerHTML = '';
+    });
+  }
 
-  yesBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    yesPressCount++;
-    resetNoButton();
-    updateYesButton();
-  });
+  if (yesBtn) {
+    yesBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      yesPressCount++;
+      resetNoButton();
+      updateYesButton();
+    });
+  }
 
-  noBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    noPressCount++;
-    resetYesButton();
-    updateNoButton();
-  });
+  if (noBtn) {
+    noBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      noPressCount++;
+      resetYesButton();
+      updateNoButton();
+    });
+  }
 
   // Stamp effect
   const stamp = document.querySelector('.stamp-sweet');
@@ -264,6 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function generatePinkHearts() {
+    if (!floatingHearts) return;
+    
     floatingHearts.innerHTML = '';
     const symbols = ['❤️', '🧡', '💛', '💚', '💙', '💜', '💖', '💗', '🌸', '🌷', '🌺', '🌹'];
     for (let i = 0; i < 16; i++) {
