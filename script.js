@@ -1,4 +1,4 @@
-// script.js - COMPLETELY FIXED VERSION
+// script.js - NORMAL SHAREABLE VERSION (no one-time link)
 document.addEventListener('DOMContentLoaded', () => {
   // ===== PIXELATED LOADING SCREEN =====
   const loadingScreen = document.getElementById('loadingScreen');
@@ -82,44 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
     '😏 you came back again... cute 😏'
   ];
 
-  // Check if we're coming back after an answer was given (REFRESH)
-  const answerInStorage = sessionStorage.getItem('answerGiven');
-  const refreshCountInStorage = sessionStorage.getItem('refreshCount');
-  
-  if (answerInStorage === 'true') {
-    // This is a REFRESH - we already answered before
-    let refreshCount = refreshCountInStorage ? parseInt(refreshCountInStorage) : 0;
-    
-    // Increment refresh count
-    refreshCount++;
-    sessionStorage.setItem('refreshCount', refreshCount.toString());
-    
-    const answer = sessionStorage.getItem('userAnswer');
-    
-    // Hide envelope and show letter
-    envelopeFront.classList.add('hidden');
-    envelopeInside.classList.remove('visible');
-    letterVault.style.display = 'block';
-    
-    if (answer === 'yes') {
-      loveLetter.classList.add('visible');
-      appreciationLetter.classList.remove('visible');
-    } else if (answer === 'no') {
-      appreciationLetter.classList.add('visible');
-      loveLetter.classList.remove('visible');
-    }
-    
-    // ONLY ON REFRESH: Show the surprise elements
-    const messageIndex = (refreshCount - 1) % refreshLetters.length;
-    refreshMessage.innerHTML = refreshLetters[messageIndex];
-    refreshModal.classList.add('show');
-    
-    const surpriseIndex = (refreshCount - 1) % surpriseMessages.length;
-    surpriseMessage.innerText = surpriseMessages[surpriseIndex];
-    surpriseHeader.classList.add('show');
-    
-    generatePinkHearts();
-  }
+  // Track refresh count (resets when page is closed)
+  let refreshCount = 0;
 
   // ---------- BUTTON FUNCTIONS ----------
   function resetYesButton() {
@@ -154,12 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Close refresh modal
+  // Show refresh modal
+  function showRefreshModal() {
+    const messageIndex = refreshCount % refreshLetters.length;
+    refreshMessage.innerHTML = refreshLetters[messageIndex];
+    refreshModal.classList.add('show');
+  }
+
   closeRefresh.addEventListener('click', () => {
     refreshModal.classList.remove('show');
   });
 
-  // Show the final letter (FIRST TIME ANSWERING)
+  // Show the final letter
   function showFinalLetter(type) {
     envelopeInside.classList.remove('visible');
     envelopeFront.classList.add('hidden');
@@ -175,15 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
       loveLetter.classList.remove('visible');
     }
     
-    // Mark that answer has been given
-    sessionStorage.setItem('answerGiven', 'true');
-    sessionStorage.setItem('userAnswer', type);
+    // Increment refresh count and show surprise elements
+    refreshCount++;
+    showRefreshModal();
     
-    // Initialize refresh count to 0 (first answer, not a refresh yet)
-    sessionStorage.setItem('refreshCount', '0');
-    
-    // DO NOT show surprise elements on first answer
-    // They will only show on refresh
+    const surpriseIndex = refreshCount % surpriseMessages.length;
+    surpriseMessage.innerText = surpriseMessages[surpriseIndex];
+    surpriseHeader.classList.add('show');
     
     generatePinkHearts();
   }
