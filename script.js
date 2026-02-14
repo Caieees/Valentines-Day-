@@ -1,9 +1,8 @@
-// script.js - ONE-TIME LINK with permanent access for the answerer
+// script.js - COMPLETELY FIXED VERSION
 document.addEventListener('DOMContentLoaded', () => {
   // ===== PIXELATED LOADING SCREEN =====
   const loadingScreen = document.getElementById('loadingScreen');
   const mainContent = document.getElementById('mainContent');
-  const expiredMessage = document.getElementById('expiredMessage');
   
   // Add pixel particles
   const pixelBg = document.querySelector('.pixel-bg');
@@ -23,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Loading timeout
   setTimeout(() => {
     loadingScreen.classList.add('fade-out');
+    mainContent.style.opacity = '1';
     setTimeout(() => {
       loadingScreen.style.display = 'none';
     }, 1000);
@@ -46,69 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const refreshMessage = document.getElementById('refreshMessage');
   const closeRefresh = document.getElementById('closeRefresh');
 
-  // ===== ONE-TIME LINK PROTECTION =====
-  // This uses localStorage which persists across sessions
-  const LINK_CLAIMED_KEY = 'valentine_link_claimed';
-  const LINK_ANSWER_KEY = 'valentine_link_answer';
-  const VISITOR_ID_KEY = 'valentine_visitor_id';
+  // Ensure everything starts hidden
+  surpriseHeader.classList.remove('show');
+  refreshModal.classList.remove('show');
+  letterVault.style.display = 'none';
   
-  // Generate a unique visitor ID for this browser
-  let visitorId = localStorage.getItem(VISITOR_ID_KEY);
-  if (!visitorId) {
-    visitorId = 'visitor_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem(VISITOR_ID_KEY, visitorId);
-  }
-  
-  // Check if the link has been claimed
-  const linkClaimed = localStorage.getItem(LINK_CLAIMED_KEY) === 'true';
-  const claimedAnswer = localStorage.getItem(LINK_ANSWER_KEY);
-  const claimedBy = localStorage.getItem('claimed_by');
-  
-  // If link is claimed and this is a DIFFERENT visitor, show expired message
-  if (linkClaimed && claimedBy !== visitorId) {
-    // Different person trying to access - show expired message
-    mainContent.style.opacity = '0';
-    setTimeout(() => {
-      mainContent.style.display = 'none';
-      expiredMessage.classList.add('show');
-    }, 500);
-  } 
-  // If link is claimed and this is THE SAME visitor, show the letter directly
-  else if (linkClaimed && claimedBy === visitorId) {
-    // Same person returning - show the letter immediately
-    envelopeFront.classList.add('hidden');
-    envelopeInside.classList.remove('visible');
-    letterVault.style.display = 'block';
-    
-    if (claimedAnswer === 'yes') {
-      loveLetter.classList.add('visible');
-      appreciationLetter.classList.remove('visible');
-    } else if (claimedAnswer === 'no') {
-      appreciationLetter.classList.add('visible');
-      loveLetter.classList.remove('visible');
-    }
-    
-    // Show refresh elements
-    const refreshCount = parseInt(localStorage.getItem('refreshCount') || '0');
-    const newCount = refreshCount + 1;
-    localStorage.setItem('refreshCount', newCount.toString());
-    
-    const messageIndex = (newCount - 1) % 5;
-    refreshMessage.innerHTML = refreshLetters[messageIndex];
-    refreshModal.classList.add('show');
-    
-    const surpriseIndex = (newCount - 1) % 5;
-    surpriseMessage.innerText = surpriseMessages[surpriseIndex];
-    surpriseHeader.classList.add('show');
-    
-    generatePinkHearts();
-    mainContent.style.opacity = '1';
-  }
-  // Link not claimed yet - show normal interface
-  else {
-    mainContent.style.opacity = '1';
-  }
-
   // Track press counts for each button (max 3)
   let yesPressCount = 0;
   let noPressCount = 0;
@@ -140,6 +82,45 @@ document.addEventListener('DOMContentLoaded', () => {
     '😏 you came back again... cute 😏'
   ];
 
+  // Check if we're coming back after an answer was given (REFRESH)
+  const answerInStorage = sessionStorage.getItem('answerGiven');
+  const refreshCountInStorage = sessionStorage.getItem('refreshCount');
+  
+  if (answerInStorage === 'true') {
+    // This is a REFRESH - we already answered before
+    let refreshCount = refreshCountInStorage ? parseInt(refreshCountInStorage) : 0;
+    
+    // Increment refresh count
+    refreshCount++;
+    sessionStorage.setItem('refreshCount', refreshCount.toString());
+    
+    const answer = sessionStorage.getItem('userAnswer');
+    
+    // Hide envelope and show letter
+    envelopeFront.classList.add('hidden');
+    envelopeInside.classList.remove('visible');
+    letterVault.style.display = 'block';
+    
+    if (answer === 'yes') {
+      loveLetter.classList.add('visible');
+      appreciationLetter.classList.remove('visible');
+    } else if (answer === 'no') {
+      appreciationLetter.classList.add('visible');
+      loveLetter.classList.remove('visible');
+    }
+    
+    // ONLY ON REFRESH: Show the surprise elements
+    const messageIndex = (refreshCount - 1) % refreshLetters.length;
+    refreshMessage.innerHTML = refreshLetters[messageIndex];
+    refreshModal.classList.add('show');
+    
+    const surpriseIndex = (refreshCount - 1) % surpriseMessages.length;
+    surpriseMessage.innerText = surpriseMessages[surpriseIndex];
+    surpriseHeader.classList.add('show');
+    
+    generatePinkHearts();
+  }
+
   // ---------- BUTTON FUNCTIONS ----------
   function resetYesButton() {
     yesPressCount = 0;
@@ -159,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       yesBtn.classList.add('pressed');
     }
     if (yesPressCount >= MAX_PRESS) {
-      claimLink('yes');
+      showFinalLetter('yes');
     }
   }
 
@@ -169,24 +150,24 @@ document.addEventListener('DOMContentLoaded', () => {
       noBtn.classList.add('pressed');
     }
     if (noPressCount >= MAX_PRESS) {
-      claimLink('no');
+      showFinalLetter('no');
     }
   }
 
-  // Claim the link (one-time use)
-  function claimLink(answer) {
-    // Mark the link as claimed by this visitor
-    localStorage.setItem(LINK_CLAIMED_KEY, 'true');
-    localStorage.setItem(LINK_ANSWER_KEY, answer);
-    localStorage.setItem('claimed_by', visitorId);
-    localStorage.setItem('refreshCount', '0');
-    
-    // Show the final letter
+  // Close refresh modal
+  closeRefresh.addEventListener('click', () => {
+    refreshModal.classList.remove('show');
+  });
+
+  // Show the final letter (FIRST TIME ANSWERING)
+  function showFinalLetter(type) {
     envelopeInside.classList.remove('visible');
     envelopeFront.classList.add('hidden');
+    
+    // Show letter vault
     letterVault.style.display = 'block';
     
-    if (answer === 'yes') {
+    if (type === 'yes') {
       loveLetter.classList.add('visible');
       appreciationLetter.classList.remove('visible');
     } else {
@@ -194,14 +175,18 @@ document.addEventListener('DOMContentLoaded', () => {
       loveLetter.classList.remove('visible');
     }
     
-    // DO NOT show refresh elements on first answer
+    // Mark that answer has been given
+    sessionStorage.setItem('answerGiven', 'true');
+    sessionStorage.setItem('userAnswer', type);
+    
+    // Initialize refresh count to 0 (first answer, not a refresh yet)
+    sessionStorage.setItem('refreshCount', '0');
+    
+    // DO NOT show surprise elements on first answer
+    // They will only show on refresh
+    
     generatePinkHearts();
   }
-
-  // Close refresh modal
-  closeRefresh.addEventListener('click', () => {
-    refreshModal.classList.remove('show');
-  });
 
   // ---------- CLICK HANDLERS ----------
   envelopeFront.addEventListener('click', (e) => {
@@ -255,5 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
       span.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
       floatingHearts.appendChild(span);
     }
+  }
+});
   }
 });
