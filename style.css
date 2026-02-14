@@ -1,4 +1,4 @@
-/* style.css - permanent memory version */
+/* style.css - COMPLETE FIXED VERSION WITH GIFS */
 * {
   margin: 0;
   padding: 0;
@@ -322,7 +322,7 @@ body {
 .envelope-3d-sweet {
   width: 100%;
   max-width: 500px;
-  height: 400px;
+  height: 450px; /* Increased height to accommodate GIF */
   position: relative;
   transition: transform 0.3s;
 }
@@ -409,7 +409,7 @@ body {
   pointer-events: none;
   transition: opacity 0.5s ease;
   box-shadow: 0 20px 30px rgba(255, 150, 180, 0.3);
-  padding: 25px;
+  padding: 20px;
 }
 
 .envelope-inside-sweet.visible {
@@ -424,7 +424,7 @@ body {
   max-width: 400px;
   background: white;
   border-radius: 40px;
-  padding: 35px 25px;
+  padding: 30px 25px;
   box-shadow: 0 15px 30px rgba(255, 100, 150, 0.2), inset 0 0 20px #ffe2e7;
   border: 3px solid #ffb7c7;
   display: flex;
@@ -432,12 +432,13 @@ body {
   align-items: center;
   text-align: center;
   animation: cardPop 0.4s ease;
+  min-height: 380px;
 }
 
 .card-heart {
   font-size: 4rem;
   animation: heartPink 2s infinite;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #ff6b8b;
   filter: drop-shadow(0 0 20px #ff8a9f);
 }
@@ -447,7 +448,7 @@ body {
   color: #ac4f6e;
   font-family: 'Dancing Script', cursive;
   font-weight: 700;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   line-height: 1.4;
   padding: 0 10px;
 }
@@ -458,6 +459,7 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+  margin-bottom: 15px;
 }
 
 .card-btn {
@@ -500,6 +502,37 @@ body {
   padding-right: 18px;
   min-width: 120px;
   filter: brightness(0.95);
+}
+
+/* ===== GIF CONTAINER STYLES ===== */
+.gif-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  min-height: 100px;
+}
+
+.reaction-gif {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(255, 100, 150, 0.3);
+  border: 3px solid white;
+  image-rendering: pixelated;
+  animation: gifPop 0.3s ease;
+}
+
+@keyframes gifPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ===== LETTER VAULT ===== */
@@ -703,16 +736,17 @@ body {
 /* responsive */
 @media (max-width: 550px) {
   .pink-paradise { padding: 25px 15px; }
-  .envelope-3d-sweet { height: 450px; }
+  .envelope-3d-sweet { height: 480px; }
   .pixel-envelope { width: 220px; height: 160px; }
   .pixel-stamp { font-size: 3rem; }
   .pixel-text { font-size: 0.7rem; padding: 10px 15px; }
   .card-btn { font-size: 1.4rem; padding: 12px 22px; min-width: 120px; }
-  .card-question { font-size: 1.9rem; margin-bottom: 25px; }
+  .card-question { font-size: 1.9rem; margin-bottom: 20px; }
   .card-heart { font-size: 3.5rem; }
   .pink-title { font-size: 1.9rem; }
   .pink-scroll { padding: 25px; font-size: 1rem; }
   .sweet-message { font-size: 1rem; }
   .pink-signature-text { font-size: 1.5rem; }
   .letter-pink-vault { padding: 25px; }
+  .reaction-gif { width: 80px; height: 80px; }
 }
